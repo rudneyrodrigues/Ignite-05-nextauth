@@ -1,10 +1,12 @@
-# Frontend - AUTENTICAÇÃO E AUTORIZAÇÃO
+# Backend - AUTENTICAÇÃO E AUTORIZAÇÃO
 
 ## 🌟 Stack
-- [ ] Next.js
 - [ ] Typescript
-- [ ] Nookies
-- [ ] Axios
+- [ ] Express
+- [ ] JSON Web Token
+- [ ] JWT Decode
+- [ ] UUID
+- [ ] Cors
 
 ## Executando o projeto
 
