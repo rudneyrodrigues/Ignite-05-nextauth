@@ -2,6 +2,7 @@ import axios, { AxiosError } from 'axios';
 import {parseCookies, setCookie} from 'nookies';
 
 import { signOut } from '../context/AuthContext';
+import { AuthTokenError } from './errors/AuthTokenError';
 
 const thirtyDays = 60 * 60 * 24 * 30; // 30 dias
 
@@ -31,8 +32,6 @@ export const setupAPIClient = (ctx = undefined) => {
   
         if (!isRefreshing) {
           isRefreshing = true;
-
-          console.log('refresh')
   
           api.post('/refresh', {
             refreshToken
@@ -82,6 +81,8 @@ export const setupAPIClient = (ctx = undefined) => {
       } else {
         if (typeof window) {
           signOut();
+        } else {
+          return Promise.reject(new AuthTokenError());
         }
       }
     }

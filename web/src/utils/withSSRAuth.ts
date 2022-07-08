@@ -1,5 +1,6 @@
 import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import { parseCookies } from "nookies";
+import { destroyCookie, parseCookies } from "nookies";
+import { AuthTokenError } from "../services/errors/AuthTokenError";
 
 // Exportamos uma função que recebe como parâmetro o contexto do SSR, e retorna
 // uma nova função a ser executada pelo SSR.
@@ -22,6 +23,20 @@ export const withSSRAuth = <P>(fn: GetServerSideProps<P>):GetServerSideProps => 
 
     // Se o usuário não estiver logado, será executado a função de SSR que foi,
     // passada como parâmetro.
-    return await fn(ctx);
+    try {
+      return await fn(ctx);
+    } catch (error) {
+      if (error instanceof AuthTokenError) {
+        destroyCookie(ctx, 'nextauth.token');
+        destroyCookie(ctx, 'nextauth.refreshToken');
+        
+        return {
+          redirect: {
+            destination: '/',
+            permanent: false,
+          },
+        }
+      }
+    }
   }
 }
