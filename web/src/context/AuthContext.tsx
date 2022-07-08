@@ -2,7 +2,7 @@ import Router from "next/router";
 import { destroyCookie, parseCookies, setCookie } from 'nookies';
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
-import { api } from "../services/api";
+import { api } from "../services/apiClient";
 
 // Interface dos dados do Usuário 
 interface User {
