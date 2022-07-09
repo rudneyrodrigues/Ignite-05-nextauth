@@ -1,5 +1,6 @@
 import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { destroyCookie, parseCookies } from "nookies";
+
 import { AuthTokenError } from "../services/errors/AuthTokenError";
 
 // Exportamos uma função que recebe como parâmetro o contexto do SSR, e retorna
