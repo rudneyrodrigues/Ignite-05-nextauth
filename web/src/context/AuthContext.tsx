@@ -1,6 +1,6 @@
 import Router from "next/router";
 import { destroyCookie, parseCookies, setCookie } from 'nookies';
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { createContext, MutableRefObject, ReactNode, useContext, useEffect, useRef, useState } from "react";
 
 import { api } from "../services/apiClient";
 
@@ -21,7 +21,9 @@ interface SignInCredentials {
 interface AuthContextData {
   user: User | undefined;
   isAuthenticated: boolean;
-  signIn(credentials: SignInCredentials): Promise<void>;
+  signOut: () => void;
+  signIn: (credentials: SignInCredentials) => Promise<void>;
+  broadcastAuth: MutableRefObject<BroadcastChannel>;
 }
 
 // Interface das propriedades do Provider de autenticação
@@ -45,6 +47,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const [user, setUser] = useState<User>();
   const isAuthenticated = !! user;
+  const broadcastAuth = useRef<BroadcastChannel>(null);
+
+  useEffect(() => {
+    broadcastAuth.current = new BroadcastChannel("auth");
+
+    broadcastAuth.current.onmessage = message => {
+      switch (message.data) {
+        case 'signOut':
+          signOut();
+          break;
+        case 'signIn':
+          Router.push('/dashboard')
+          break;
+        default:
+          break;
+      }
+    }
+  }, [broadcastAuth])
 
   useEffect(() => {
     const {'nextauth.token': token} = parseCookies();
@@ -91,6 +111,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       api.defaults.headers['Authorization'] = `Bearer ${token}`;
 
       Router.push("/dashboard");
+
+      broadcastAuth.current.postMessage("signIn");
     } catch (error) {
       console.log(error);
     }
@@ -100,7 +122,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     <AuthContext.Provider value={{
       user,
       signIn,
-      isAuthenticated
+      signOut,
+      isAuthenticated,
+      broadcastAuth
     }}>
       {children}
     </AuthContext.Provider>

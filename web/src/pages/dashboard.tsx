@@ -1,22 +1,23 @@
 import { NextPage } from "next";
-import { Can } from "../components/Can";
 
+import { Can } from "../components/Can";
 import { useAuth } from "../context/AuthContext";
-import { useCan } from "../hooks/useCan";
 import { setupAPIClient } from "../services/api";
 import { withSSRAuth } from "../utils/withSSRAuth";
 
 const Dashboard: NextPage = () => {
-  const { user } = useAuth();
+  const { user, signOut, broadcastAuth } = useAuth();
 
-  // const useCanSeeMetrics = useCan({
-  //   permissions: ["metrics.list"],
-  //   roles: ["editor", "administrator"],
-  // });
+  function handleSignOut() {
+    broadcastAuth.current.postMessage("signOut");
+    signOut();
+  }
 
   return (
     <div>
       <h1>{user?.email}</h1>
+
+      <button onClick={handleSignOut}>Sign out</button>
 
       <Can permissions={['metrics.list']} roles={["editor", "administrator"]}>
         <div style={{

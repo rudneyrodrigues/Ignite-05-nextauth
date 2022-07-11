@@ -52,13 +52,13 @@ export const setupAPIClient = (ctx = undefined) => {
   
             failedRequestsQueue.forEach((req) => req.resolve(token))
             failedRequestsQueue = [];
-  
-            if (typeof window) {
-              signOut();
-            }
           }).catch(err => {
             failedRequestsQueue.forEach((req) => req.reject(err))
             failedRequestsQueue = [];
+
+            // if (typeof window) {
+            //   signOut();
+            // }
           }).finally(() => {
             isRefreshing = false;
           });
