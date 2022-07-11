@@ -5,6 +5,7 @@
 - [ ] Typescript
 - [ ] Nookies
 - [ ] Axios
+- [ ] jwt-decode
 
 ## Executando o projeto
 
